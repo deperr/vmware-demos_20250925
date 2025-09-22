@@ -1,0 +1,9 @@
+---
+
+- name: Test connectivity of VMWare Guests
+  hosts: "{{ _hosts  | default(omit) }}"
+  become: false
+
+  tasks:
+    - name: Ping VMWare Guests
+      ansible.builtin.ping:
