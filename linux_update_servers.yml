@@ -1,0 +1,30 @@
+---
+
+- name: Patch Linux servers
+  hosts: "{{ _hosts  | default(omit) }}"
+  become: true
+
+  tasks:
+    - name: Install yum-utils
+      ansible.builtin.package:
+        name: yum-utils
+        state: installed
+
+    - name: Get package facts
+      check_mode: false
+      ansible.builtin.package_facts:
+
+    - name: Upgrade packages on hosts
+      ansible.builtin.package:
+        name: '*'
+        state: latest
+
+    - name: Check to see if the server needs rebooting
+      register: reboot_result
+      changed_when: reboot_result.rc == 1
+      failed_when: reboot_result.rc > 1
+      ansible.builtin.command: needs-restarting -r
+
+    - name: Reboot server if required
+      when: reboot_result.rc == 1
+      ansible.builtin.reboot:
