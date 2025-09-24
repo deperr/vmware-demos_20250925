@@ -61,7 +61,7 @@
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
-        datacenter: "/{{ datacenter }}/vm"
+        datacenter: "/{{ datacenter }}/workload_share_swPsq"
         folder: "{{ item.folder }}"
         snapshot_name: "{{ item.name }}"
         state: absent
