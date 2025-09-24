@@ -63,6 +63,7 @@
 
     - name: Get snapshot information from VMs
       community.vmware.vmware_all_snapshots_info:
+        datacenter: "SDDC-Datacenter"
 
     # - name: Get snapshot information for VM
     #   register: vm_snapshots
