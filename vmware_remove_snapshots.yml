@@ -59,7 +59,7 @@
           - all_vms_result.virtual_machines is defined
           - all_vms_result.virtual_machines | length > 0
         fail_msg: "No virtual machines found in vCenter or connection failed"
-        success_msg: "Successfully discovered {{ all_vms_result.virtual_machines | length }} virtual machines"
+        success_msg: "Successfully discovered {{ all_vms_result | length }} virtual machines"
 
     - name: Get snapshot information for VM
       register: vm_snapshots
