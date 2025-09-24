@@ -43,7 +43,7 @@
       community.vmware.vmware_all_snapshots_info:
         datacenter: "SDDC-Datacenter"
 
-    - name: Debug
+    - name: Debug for snapshot names
       ansible.builtin.debug:
         msg: "{{ snapshot_info.vmware_all_snapshots_info | json_query('[].name') }}"
 
