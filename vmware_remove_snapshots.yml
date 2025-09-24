@@ -5,7 +5,7 @@
   gather_facts: false
 
   # module_defaults:
-  #   vmware.vmware.vmware_vm_info:
+  #   vmware.vmware.vm_info:
   #     hostname: "{{ vcenter_hostname }}"
   #     username: "{{ vcenter_username }}"
   #     password: "{{ vcenter_password }}"
@@ -51,7 +51,7 @@
 
     - name: Retrieve all virtual machines from vCenter
       register: all_vms_result
-      vmware.vmware.vmware_vm_info:
+      vmware.vmware.vm_info:
         vm_type: vm
 
     - name: Validate VM discovery results
