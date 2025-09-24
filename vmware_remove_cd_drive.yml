@@ -32,7 +32,19 @@
           Mount check result: {{ mount_check.stdout | default('Device not found') }}
           Is mounted: {{ "/dev/sr0" in (mount_check.stdout | default("")) }}
 
-    - name: Get mount point for /dev/sr0
+    - name: Debug mount point task conditions
+      when: sr0_check.stat.exists | default(false)
+      ansible.builtin.debug:
+        msg: |
+          VM: {{ inventory_hostname }}
+          === Debug mount point task conditions ===
+          Condition 1 - sr0_check.stat.exists: {{ sr0_check.stat.exists | default(false) }}
+          Condition 2 - mount_check.stdout is defined: {{ mount_check.stdout is defined }}
+          Condition 3 - mount_check.stdout != "NOT_MOUNTED": {{ mount_check.stdout != "NOT_MOUNTED" if mount_check.stdout is defined else 'N/A' }}
+          Condition 4 - "/dev/sr0" in mount_check.stdout: {{ '"/dev/sr0" in mount_check.stdout' if mount_check.stdout is defined else 'N/A' }}
+          mount_check.stdout value: "{{ mount_check.stdout | default('UNDEFINED') }}"
+
+    - name: Get mount point for /dev/sr0 (when mounted)
       when:
         - sr0_check.stat.exists | default(false)
         - mount_check.stdout is defined
@@ -40,6 +52,17 @@
         - '"/dev/sr0" in mount_check.stdout'
       register: mount_point_check
       ansible.builtin.shell: echo "{{ mount_check.stdout }}" | awk '{print $3}' | head -n1
+
+    - name: Handle unmounted /dev/sr0 device
+      when:
+        - sr0_check.stat.exists | default(false)
+        - mount_check.stdout is defined
+        - mount_check.stdout == "NOT_MOUNTED"
+      ansible.builtin.debug:
+        msg: |
+          VM: {{ inventory_hostname }}
+          INFO: /dev/sr0 exists but is not currently mounted.
+          This is normal - the device can be ejected directly without unmounting.
 
     - name: Identify processes using CD-ROM mount point
       when:
@@ -50,6 +73,7 @@
       register: lsof_check
       failed_when: false
       ansible.builtin.shell: |
+        set -o pipefail
         mount_point="{{ mount_point_check.stdout }}"
         if [ -n "$mount_point" ]; then
           echo "Checking processes using: $mount_point"
@@ -59,7 +83,7 @@
         fi
 
     - name: Display processes using mount point
-      when:
+      when: 
         - lsof_check is defined
         - lsof_check.stdout is defined
         - lsof_check.stdout != "NO_PROCESSES"
@@ -79,6 +103,7 @@
         - '"COMMAND" in lsof_check.stdout'  # lsof output contains actual processes
       failed_when: false
       ansible.builtin.shell: |
+        set -o pipefail
         mount_point="{{ mount_point_check.stdout }}"
         echo "Attempting to kill processes using $mount_point"
 
@@ -101,7 +126,7 @@
           echo "No processes found to kill"
         fi
 
-    - name: Attempt to unmount /dev/sr0
+    - name: Attempt to unmount /dev/sr0 (when mounted)
       when:
         - sr0_check.stat.exists | default(false)
         - mount_check.stdout is defined
@@ -125,6 +150,16 @@
             exit 1
           fi
         fi
+
+    - name: Set unmount status for already unmounted device
+      when:
+        - sr0_check.stat.exists | default(false)
+        - mount_check.stdout is defined
+        - mount_check.stdout == "NOT_MOUNTED"
+      ansible.builtin.set_fact:
+        unmount_result:
+          stdout: "INFO: Device was already unmounted - no action needed"
+          rc: 0
 
     - name: Display unmount results
       when: unmount_result is defined
@@ -162,6 +197,7 @@
       register: final_mount_check
       failed_when: false
       ansible.builtin.shell: |
+        set -o pipefail
         echo "=== Final Mount Status Check ==="
         if mount | grep -q "/dev/sr0"; then
           echo "WARNING: /dev/sr0 is still mounted:"
