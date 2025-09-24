@@ -4,22 +4,8 @@
   hosts: localhost
   gather_facts: false
 
-  # module_defaults:
-  #   vmware.vmware.vm_info:
-  #     hostname: "{{ vcenter_hostname }}"
-  #     username: "{{ vcenter_username }}"
-  #     password: "{{ vcenter_password }}"
-  #     validate_certs: "{{ vcenter_validate_certs | default(false) }}"
-  #   vmware.vmware.vmware_guest_snapshot_info:
-  #     hostname: "{{ vcenter_hostname }}"
-  #     username: "{{ vcenter_username }}"
-  #     password: "{{ vcenter_password }}"
-  #     validate_certs: "{{ vcenter_validate_certs | default(false) }}"
-  #   vmware.vmware.vm_snapshot:
-  #     hostname: "{{ vcenter_hostname }}"
-  #     username: "{{ vcenter_username }}"
-  #     password: "{{ vcenter_password }}"
-  #     validate_certs: "{{ vcenter_validate_certs | default(false) }}"
+  vars:
+    datacenter: 'SDDC-Datacenter'
 
   tasks:
 
@@ -75,7 +61,7 @@
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
-        datacenter: "{{ snapshot_info.datacenter }}"
+        datacenter: "{{ datacenter }}"
         folder: "{{ item.folder }}"
         snapshot_name: "{{ item.name }}"
         state: absent
