@@ -45,7 +45,6 @@
       ansible.builtin.debug:
         msg:
           - "=== VMware Snapshot Cleanup Configuration ==="
-          - "vCenter Host: {{ host }}"
           - "Snapshot Age Threshold: {{ snapshot_age }} days"
           - "Execution Time: {{ current_timestamp }}"
 
