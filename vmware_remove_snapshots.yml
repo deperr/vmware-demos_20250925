@@ -62,8 +62,15 @@
     #     success_msg: "Successfully discovered {{ all_vms_result | length }} virtual machines"
 
     - name: Get snapshot information from VMs
+      register: snapshot_disco
       community.vmware.vmware_all_snapshots_info:
         datacenter: "SDDC-Datacenter"
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "{{ snapshot_disco }}"
+
+    - name: Remove older snapshots from VM
 
     # - name: Get snapshot information for VM
     #   register: vm_snapshots
