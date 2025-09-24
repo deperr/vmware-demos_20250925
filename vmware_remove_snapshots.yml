@@ -69,7 +69,14 @@
     - name: Debug
       ansible.builtin.debug:
         # msg: "{{ snapshot_disco.vmware_all_snapshots_info.name }}"
-        msg: "{{ snapshot_disco.vmware_all_snapshots_info}}"
+        msg: "{{ snapshot_disco[vmware_all_snapshots_info] }}"
+
+    # - name: Remove old snapshots
+    #   register: snapshot_removal
+    #   vmware.vmware.vm_snapshot:
+    #     name: "{{ snapshot_item.0.vm_name }}"
+    #     snapshot_name: "{{ snapshot_item.1.name }}"
+    #     state: absent   
 
 
     # - name: Get snapshot information for VM
