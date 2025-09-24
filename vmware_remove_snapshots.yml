@@ -70,7 +70,6 @@
       ansible.builtin.debug:
         msg: "{{ snapshot_disco }}"
 
-    - name: Remove older snapshots from VM
 
     # - name: Get snapshot information for VM
     #   register: vm_snapshots
