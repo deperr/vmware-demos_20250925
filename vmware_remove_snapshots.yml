@@ -72,7 +72,7 @@
       block:
         - name: Get snapshot information for VM
           register: vm_snapshots
-          vmware.vmware.vmware_guest_snapshot_info:
+          community.vmware.vmware_guest_snapshot_info:
             name: "{{ vm_item.guest_name }}"
 
         - name: Identify old snapshots for removal
