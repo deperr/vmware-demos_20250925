@@ -5,7 +5,7 @@
   gather_facts: false
 
   vars:
-    datacenter: 'SDDC-Datacenter'
+    datacenter: SDDC-Datacenter'
 
   tasks:
 
@@ -61,7 +61,7 @@
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
-        datacenter: "{{ datacenter }}"
+        datacenter: "/{{ datacenter }}/vm"
         folder: "{{ item.folder }}"
         snapshot_name: "{{ item.name }}"
         state: absent
