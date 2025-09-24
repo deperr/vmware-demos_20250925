@@ -68,7 +68,7 @@
 
     - name: Debug
       ansible.builtin.debug:
-        msg: "{{ snapshot_disco.vmware_all_snapshots_info }}"
+        msg: "{{ snapshot_disco.vmware_all_snapshots_info.name }}"
 
 
     # - name: Get snapshot information for VM
