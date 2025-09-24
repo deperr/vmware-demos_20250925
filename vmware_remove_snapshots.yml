@@ -75,6 +75,7 @@
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
+        folder: "{{ item.parent_folder }}"
         snapshot_name: "{{ item.name }}"
         state: absent
 
