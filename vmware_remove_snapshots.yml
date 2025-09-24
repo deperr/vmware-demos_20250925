@@ -5,7 +5,7 @@
   gather_facts: false
 
   vars:
-    datacenter: SDDC-Datacenter'
+    datacenter: 'SDDC-Datacenter'
 
   tasks:
 
