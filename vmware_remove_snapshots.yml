@@ -75,115 +75,115 @@
           community.vmware.vmware_guest_snapshot_info:
             name: "{{ vm_item.guest_name }}"
 
-        - name: Identify old snapshots for removal
-          when: 
-            - vm_snapshots.guest_snapshots is defined
-            - vm_snapshots.guest_snapshots.snapshots is defined
-            - vm_snapshots.guest_snapshots.snapshots | length > 0
-          vars:
-            old_snapshots: "{{ vm_snapshots.guest_snapshots.snapshots | selectattr('create_time', 'defined') |
-                              selectattr('create_time', 'lt', threshold) | list }}"
-          ansible.builtin.set_fact:
-            current_vm_data:
-              vm_name: "{{ vm_item.guest_name }}"
-              power_state: "{{ vm_item.power_state }}"
-              total_snapshots: "{{ vm_snapshots.guest_snapshots.snapshots | length }}"
-              old_snapshots: "{{ old_snapshots }}"
-              old_snapshots_count: "{{ old_snapshots | length }}"
+    #     - name: Identify old snapshots for removal
+    #       when: 
+    #         - vm_snapshots.guest_snapshots is defined
+    #         - vm_snapshots.guest_snapshots.snapshots is defined
+    #         - vm_snapshots.guest_snapshots.snapshots | length > 0
+    #       vars:
+    #         old_snapshots: "{{ vm_snapshots.guest_snapshots.snapshots | selectattr('create_time', 'defined') |
+    #                           selectattr('create_time', 'lt', threshold) | list }}"
+    #       ansible.builtin.set_fact:
+    #         current_vm_data:
+    #           vm_name: "{{ vm_item.guest_name }}"
+    #           power_state: "{{ vm_item.power_state }}"
+    #           total_snapshots: "{{ vm_snapshots.guest_snapshots.snapshots | length }}"
+    #           old_snapshots: "{{ old_snapshots }}"
+    #           old_snapshots_count: "{{ old_snapshots | length }}"
 
-        - name: Add VM to processing list if old snapshots found
-          when: 
-            - current_vm_data is defined
-            - current_vm_data.old_snapshots_count > 0
-          ansible.builtin.set_fact:
-            vms_processed: "{{ vms_processed + [current_vm_data] }}"
+    #     - name: Add VM to processing list if old snapshots found
+    #       when: 
+    #         - current_vm_data is defined
+    #         - current_vm_data.old_snapshots_count > 0
+    #       ansible.builtin.set_fact:
+    #         vms_processed: "{{ vms_processed + [current_vm_data] }}"
 
-      rescue:
-        - name: Log snapshot analysis failure
-          ansible.builtin.debug:
-            msg: "Failed to analyze snapshots for VM {{ vm_item.guest_name }}: {{ ansible_failed_result.msg | default('Unknown error') }}"
+    #   rescue:
+    #     - name: Log snapshot analysis failure
+    #       ansible.builtin.debug:
+    #         msg: "Failed to analyze snapshots for VM {{ vm_item.guest_name }}: {{ ansible_failed_result.msg | default('Unknown error') }}"
 
-    - name: Display snapshot analysis summary
-      ansible.builtin.debug:
-        msg:
-          - "=== Snapshot Analysis Results ==="
-          - "Total VMs Scanned: {{ all_vms_result.virtual_machines | length }}"
-          - "VMs with Old Snapshots: {{ vms_processed | length }}"
-          - "Total Old Snapshots Found: {{ vms_processed | map(attribute='old_snapshots_count') | sum }}"
-          - "VMs requiring cleanup: {{ vms_processed | map(attribute='vm_name') | list }}"
+    # - name: Display snapshot analysis summary
+    #   ansible.builtin.debug:
+    #     msg:
+    #       - "=== Snapshot Analysis Results ==="
+    #       - "Total VMs Scanned: {{ all_vms_result.virtual_machines | length }}"
+    #       - "VMs with Old Snapshots: {{ vms_processed | length }}"
+    #       - "Total Old Snapshots Found: {{ vms_processed | map(attribute='old_snapshots_count') | sum }}"
+    #       - "VMs requiring cleanup: {{ vms_processed | map(attribute='vm_name') | list }}"
 
-    - name: Display detailed old snapshot inventory
-      when: vms_processed | length > 0
-      loop: "{{ vms_processed }}"
-      loop_control:
-        loop_var: vm_data
-        label: "{{ vm_data.vm_name }}"
-      ansible.builtin.debug:
-        msg:
-          - "VM: {{ vm_data.vm_name }}"
-          - "Power State: {{ vm_data.power_state }}"
-          - "Old Snapshots: {{ vm_data.old_snapshots_count }}/{{ vm_data.total_snapshots }}"
-          - "Snapshots to Remove: {{ vm_data.old_snapshots | map(attribute='name') | list }}"
+    # - name: Display detailed old snapshot inventory
+    #   when: vms_processed | length > 0
+    #   loop: "{{ vms_processed }}"
+    #   loop_control:
+    #     loop_var: vm_data
+    #     label: "{{ vm_data.vm_name }}"
+    #   ansible.builtin.debug:
+    #     msg:
+    #       - "VM: {{ vm_data.vm_name }}"
+    #       - "Power State: {{ vm_data.power_state }}"
+    #       - "Old Snapshots: {{ vm_data.old_snapshots_count }}/{{ vm_data.total_snapshots }}"
+    #       - "Snapshots to Remove: {{ vm_data.old_snapshots | map(attribute='name') | list }}"
 
-    - name: Remove old snapshots
-      when: vms_processed | length > 0
-      register: removal_results
-      loop: "{{ vms_processed | subelements('old_snapshots') }}"
-      loop_control:
-        loop_var: snapshot_item
-        label: "{{ snapshot_item.0.vm_name }} - {{ snapshot_item.1.name }}"
-      failed_when: false
-      block:
-        - name: Remove individual snapshot
-          register: snapshot_removal
-          vmware.vmware.vm_snapshot:
-            name: "{{ snapshot_item.0.vm_name }}"
-            snapshot_name: "{{ snapshot_item.1.name }}"
-            state: absent
+    # - name: Remove old snapshots
+    #   when: vms_processed | length > 0
+    #   register: removal_results
+    #   loop: "{{ vms_processed | subelements('old_snapshots') }}"
+    #   loop_control:
+    #     loop_var: snapshot_item
+    #     label: "{{ snapshot_item.0.vm_name }} - {{ snapshot_item.1.name }}"
+    #   failed_when: false
+    #   block:
+    #     - name: Remove individual snapshot
+    #       register: snapshot_removal
+    #       vmware.vmware.vm_snapshot:
+    #         name: "{{ snapshot_item.0.vm_name }}"
+    #         snapshot_name: "{{ snapshot_item.1.name }}"
+    #         state: absent
 
-        - name: Track successful removal
-          ansible.builtin.set_fact:
-            snapshots_removed: "{{ snapshots_removed + 1 }}"
+    #     - name: Track successful removal
+    #       ansible.builtin.set_fact:
+    #         snapshots_removed: "{{ snapshots_removed + 1 }}"
 
-      rescue:
-        - name: Track removal failure
-          ansible.builtin.set_fact:
-            removal_failures: "{{ removal_failures + 1 }}"
+    #   rescue:
+    #     - name: Track removal failure
+    #       ansible.builtin.set_fact:
+    #         removal_failures: "{{ removal_failures + 1 }}"
 
-        - name: Log removal failure details
-          ansible.builtin.debug:
-            msg: "Failed to remove snapshot '{{ snapshot_item.1.name }}' from VM '{{ snapshot_item.0.vm_name }}': {{ ansible_failed_result.msg | default('Unknown error') }}"
+    #     - name: Log removal failure details
+    #       ansible.builtin.debug:
+    #         msg: "Failed to remove snapshot '{{ snapshot_item.1.name }}' from VM '{{ snapshot_item.0.vm_name }}': {{ ansible_failed_result.msg | default('Unknown error') }}"
 
-    - name: Generate execution summary
-      ansible.builtin.set_fact:
-        execution_summary:
-          execution_timestamp: "{{ current_timestamp }}"
-          vcenter_host: "{{ vcenter_hostname }}"
-          snapshot_age_threshold_days: "{{ snapshot_age }}"
-          total_vms_scanned: "{{ all_vms_result.virtual_machines | length }}"
-          vms_with_old_snapshots: "{{ vms_processed | length }}"
-          total_old_snapshots_found: "{{ vms_processed | map(attribute='old_snapshots_count') | sum }}"
-          snapshots_successfully_removed: "{{ snapshots_removed }}"
-          snapshot_removal_failures: "{{ removal_failures }}"
-          execution_status: "{{ 'success' if removal_failures == 0 else 'completed_with_errors' }}"
+    # - name: Generate execution summary
+    #   ansible.builtin.set_fact:
+    #     execution_summary:
+    #       execution_timestamp: "{{ current_timestamp }}"
+    #       vcenter_host: "{{ vcenter_hostname }}"
+    #       snapshot_age_threshold_days: "{{ snapshot_age }}"
+    #       total_vms_scanned: "{{ all_vms_result.virtual_machines | length }}"
+    #       vms_with_old_snapshots: "{{ vms_processed | length }}"
+    #       total_old_snapshots_found: "{{ vms_processed | map(attribute='old_snapshots_count') | sum }}"
+    #       snapshots_successfully_removed: "{{ snapshots_removed }}"
+    #       snapshot_removal_failures: "{{ removal_failures }}"
+    #       execution_status: "{{ 'success' if removal_failures == 0 else 'completed_with_errors' }}"
 
-    - name: Display final execution summary
-      ansible.builtin.debug:
-        msg: |
-          ===== VMware Snapshot Cleanup Summary =====
-          Execution Time: {{ execution_summary.execution_timestamp }}
-          vCenter Host: {{ execution_summary.vcenter_host }}
-          Snapshot Age Threshold: {{ execution_summary.snapshot_age_threshold_days }} days
+    # - name: Display final execution summary
+    #   ansible.builtin.debug:
+    #     msg: |
+    #       ===== VMware Snapshot Cleanup Summary =====
+    #       Execution Time: {{ execution_summary.execution_timestamp }}
+    #       vCenter Host: {{ execution_summary.vcenter_host }}
+    #       Snapshot Age Threshold: {{ execution_summary.snapshot_age_threshold_days }} days
           
-          Scan Results:
-          - Total VMs Scanned: {{ execution_summary.total_vms_scanned }}
-          - VMs with Old Snapshots: {{ execution_summary.vms_with_old_snapshots }}
-          - Total Old Snapshots Found: {{ execution_summary.total_old_snapshots_found }}
+    #       Scan Results:
+    #       - Total VMs Scanned: {{ execution_summary.total_vms_scanned }}
+    #       - VMs with Old Snapshots: {{ execution_summary.vms_with_old_snapshots }}
+    #       - Total Old Snapshots Found: {{ execution_summary.total_old_snapshots_found }}
           
-          Removal Results:
-          - Snapshots Successfully Removed: {{ execution_summary.snapshots_successfully_removed }}
-          - Removal Failures: {{ execution_summary.snapshot_removal_failures }}
-          - Overall Status: {{ execution_summary.execution_status | upper }}
+    #       Removal Results:
+    #       - Snapshots Successfully Removed: {{ execution_summary.snapshots_successfully_removed }}
+    #       - Removal Failures: {{ execution_summary.snapshot_removal_failures }}
+    #       - Overall Status: {{ execution_summary.execution_status | upper }}
 
     # - name: Save execution results to workflow artifacts
     #   ansible.builtin.set_stats:
