@@ -61,15 +61,18 @@
         # fail_msg: "No virtual machines found in vCenter or connection failed"
     #     success_msg: "Successfully discovered {{ all_vms_result | length }} virtual machines"
 
-    - name: Get snapshot information for VM
-      register: vm_snapshots
-      # loop: "{{ all_vms_result.virtual_machines }}"
-      loop: "{{ all_vms_result.name }}"
-      loop_control:
-        loop_var: vm_item
-        label: "{{ vm_item.guest_name }}"
-      community.vmware.vmware_guest_snapshot_info:
-        name: "{{ vm_item.guest_name }}"
+    - name: Get snapshot information from VMs
+      community.vmware.vmware_all_snapshots_info:
+
+    # - name: Get snapshot information for VM
+    #   register: vm_snapshots
+    #   # loop: "{{ all_vms_result.virtual_machines }}"
+    #   loop: "{{ all_vms_result.name }}"
+    #   loop_control:
+    #     loop_var: vm_item
+    #     label: "{{ vm_item.guest_name }}"
+    #   community.vmware.vmware_guest_snapshot_info:
+    #     name: "{{ vm_item.guest_name }}"
 
     #     - name: Identify old snapshots for removal
     #       when: 
