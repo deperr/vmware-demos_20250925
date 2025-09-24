@@ -51,7 +51,7 @@
 
     - name: Retrieve all virtual machines from vCenter
       register: all_vms_result
-      vmware.vmware.vcenter_vm_info:
+      vmware.vmware_rest.vcenter_vm_info:
         vm_type: vm
 
     - name: Validate VM discovery results
