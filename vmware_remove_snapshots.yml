@@ -63,7 +63,7 @@
         success_msg: "Successfully discovered {{ all_vms_result.virtual_machines | length }} virtual machines"
 
     - name: Process each VM for snapshot analysis
-      register: snapshot_analysis_results
+      # register: snapshot_analysis_results
       loop: "{{ all_vms_result.virtual_machines }}"
       loop_control:
         loop_var: vm_item
