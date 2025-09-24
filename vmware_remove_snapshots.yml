@@ -63,7 +63,8 @@
 
     - name: Get snapshot information for VM
       register: vm_snapshots
-      loop: "{{ all_vms_result.virtual_machines }}"
+      # loop: "{{ all_vms_result.virtual_machines }}"
+      loop: "{{ all_vms_result }}"
       loop_control:
         loop_var: vm_item
         label: "{{ vm_item.guest_name }}"
