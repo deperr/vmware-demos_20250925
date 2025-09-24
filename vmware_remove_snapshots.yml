@@ -69,7 +69,7 @@
     - name: Debug
       ansible.builtin.debug:
         # msg: "{{ snapshot_disco.vmware_all_snapshots_info }}"
-        msg: "{{ snapshot_disco['vmware_all_snapshots_info']['name'] | dict2item }}"
+        msg: "{{ snapshot_disco['vmware_all_snapshots_info']['name'] | dict2items }}"
 
     # - name: Remove old snapshots
     #   register: snapshot_removal
