@@ -22,10 +22,14 @@
       ansible.builtin.set_fact:
         snapshot_age: "{{ snapshot_age | default(7) | int }}"
         current_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S%z') }}"
-        threshold: "{{ (lookup('pipe', 'date -u -d \"' + (snapshot_age | default(7) | string) + ' days ago\" +%Y-%m-%dT%H:%M:%S%z') | int) }}"
+        threshold: "{{ (lookup('pipe', 'date -u -d \"' + (snapshot_age | default(7) | string) + ' days ago\" +%s') | int) }}"
         vms_processed: []
         snapshots_removed: 0
         removal_failures: 0
+
+    - name: Parse threshold into datetime object
+      set_fact:
+        threshold_date: "{{ threshold | to_datetime('%Y-%m-%dT%H:%M:%SZ') }}"
 
     - name: Display cleanup configuration
       ansible.builtin.debug:
