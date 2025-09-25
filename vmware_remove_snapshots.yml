@@ -2,7 +2,7 @@
 
 - name: VMware snapshot cleanup - Remove old snapshots
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
 
   vars:
     datacenter: 'SDDC-Datacenter'
