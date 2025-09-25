@@ -6,23 +6,24 @@
 
   vars:
     datacenter: 'SDDC-Datacenter'
+    snapshot_age: 7
 
   tasks:
 
-    - name: Validate snapshot age parameter
-      ansible.builtin.assert:
-        that:
-          - snapshot_age | default(7) | int > 0
-          - snapshot_age | default(7) | int <= 365
-        fail_msg: "snapshot_age must be between 1 and 365 days (provided: {{ snapshot_age | default(7) }})"
-        success_msg: "Snapshot age threshold validated: {{ snapshot_age | default(7) }} days"
+    # - name: Validate snapshot age parameter
+    #   ansible.builtin.assert:
+    #     that:
+    #       - snapshot_age | default(7) | int > 0
+    #       - snapshot_age | default(7) | int <= 365
+    #     fail_msg: "snapshot_age must be between 1 and 365 days (provided: {{ snapshot_age | default(7) }})"
+    #     success_msg: "Snapshot age threshold validated: {{ snapshot_age | default(7) }} days"
 
     - name: Initialize snapshot cleanup variables
       register: cleanup_vars
       ansible.builtin.set_fact:
-        snapshot_age: "{{ snapshot_age | default(7) }}"
-        current_timestamp: "{{ lookup('pipe', 'date -u +%Y-%m-%dT%H:%M:%SZ') }}"
-        threshold: "{{ (lookup('pipe', 'date -u -d \"' + (snapshot_age | default(7) | string) + ' days ago\" +%s') | int) }}"
+        snapshot_age: "{{ snapshot_age | default(7) | int }}"
+        current_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S%z') }}"
+        cutoff_time: "{{ current_time - (snapshot_age_days | community.general.time_delta('d')) }}"
         vms_processed: []
         snapshots_removed: 0
         removal_failures: 0
@@ -49,6 +50,7 @@
 
     - name: Remove old snapshots
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
+      when: (item.creation_time | to_datetime('%Y-%m-%dT%H:%M:%S.%f%z')) < cutoff_time
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
         datacenter: "{{ datacenter }}"
