@@ -27,10 +27,6 @@
         snapshots_removed: 0
         removal_failures: 0
 
-    - name: Parse threshold into datetime object
-      set_fact:
-        threshold_date: "{{ threshold | string | to_datetime }}"
-
     - name: Display cleanup configuration
       ansible.builtin.debug:
         msg:
@@ -53,7 +49,7 @@
 
     - name: Remove old snapshots
       loop: "{{ snapshot_info.vmware_all_snapshots_info }}"
-      when: (item.creation_time | to_datetime('%Y-%m-%dT%H:%M:%S.%f%z')).timestamp() < threshold_date.timestamp()
+      when: (item.creation_time | to_datetime('%Y-%m-%dT%H:%M:%S.%f%z')).timestamp() < threshold
       vmware.vmware.vm_snapshot:
         name: "{{ item.vm_name }}"
         datacenter: "{{ datacenter }}"
