@@ -35,14 +35,14 @@
     - name: Debug mount point task conditions
       when: sr0_check.stat.exists | default(false)
       ansible.builtin.debug:
-        msg:
-          - VM: {{ inventory_hostname }}
-          - === Debug mount point task conditions ===
-          - sr0_check.stat.exists: {{ sr0_check.stat.exists | default(false) }}
-          - mount_check.stdout is defined: {{ mount_check.stdout is defined }}
-          - mount_check.stdout != "NOT_MOUNTED": {{ mount_check.stdout != "NOT_MOUNTED" if mount_check.stdout is defined else 'N/A' }}
-          - "/dev/sr0" in mount_check.stdout: {{ '"/dev/sr0" in mount_check.stdout' if mount_check.stdout is defined else 'N/A' }}
-          - mount_check.stdout value: "{{ mount_check.stdout | default('UNDEFINED') }}"
+        msg: |
+          VM: {{ inventory_hostname }}
+          === Debug mount point task conditions ===
+          sr0_check.stat.exists: {{ sr0_check.stat.exists | default(false) }}
+          mount_check.stdout is defined: {{ mount_check.stdout is defined }}
+          mount_check.stdout != "NOT_MOUNTED": {{ mount_check.stdout != "NOT_MOUNTED" if mount_check.stdout is defined else 'N/A' }}
+          "/dev/sr0" in mount_check.stdout: {{ '"/dev/sr0" in mount_check.stdout' if mount_check.stdout is defined else 'N/A' }}
+          mount_check.stdout value: "{{ mount_check.stdout | default('UNDEFINED') }}"
 
     - name: Get mount point for /dev/sr0 (when mounted)
       when:
