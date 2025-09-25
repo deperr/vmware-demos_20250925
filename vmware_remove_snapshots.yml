@@ -6,7 +6,6 @@
 
   vars:
     datacenter: 'SDDC-Datacenter'
-    snapshot_age: 7
 
   tasks:
 
@@ -22,15 +21,11 @@
       register: cleanup_vars
       ansible.builtin.set_fact:
         snapshot_age: "{{ snapshot_age | default(7) | int }}"
-        current_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S%z') }}"
+        current_time: "{{ ansible_date_time.iso8601 | to_datetime('"%Y-%m-%dT%H:%M:%S.%f+00:00"') }}"
         threshold: "{{ (lookup('pipe', 'date -u -d \"' + (snapshot_age | default(7) | string) + ' days ago\" +%s') | int) }}"
         vms_processed: []
         snapshots_removed: 0
         removal_failures: 0
-
-    # - name: Convert threshold into datetime object
-    #   ansible.builtin.set_fact:
-    #     threshold_date: "{{ threshold | to_datetime('%Y-%m-%dT%H:%M:%SZ') }}"
 
     - name: Display cleanup configuration
       ansible.builtin.debug:
