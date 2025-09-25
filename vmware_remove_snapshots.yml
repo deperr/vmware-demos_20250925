@@ -29,7 +29,7 @@
 
     - name: Parse threshold into datetime object
       set_fact:
-        threshold_date: "{{ threshold | int | to_datetime }}"
+        threshold_date: "{{ threshold | string | to_datetime }}"
 
     - name: Display cleanup configuration
       ansible.builtin.debug:
