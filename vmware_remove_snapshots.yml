@@ -21,7 +21,7 @@
       register: cleanup_vars
       ansible.builtin.set_fact:
         snapshot_age: "{{ snapshot_age | default(7) | int }}"
-        current_time: "{{ ansible_date_time.iso8601 | to_datetime('"%Y-%m-%dT%H:%M:%S.%f+00:00"') }}"
+        current_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S.%f+00:00') }}"
         threshold: "{{ (lookup('pipe', 'date -u -d \"' + (snapshot_age | default(7) | string) + ' days ago\" +%s') | int) }}"
         vms_processed: []
         snapshots_removed: 0
