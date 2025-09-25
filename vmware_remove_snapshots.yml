@@ -37,7 +37,7 @@
         msg:
           - "=== VMware Snapshot Cleanup Configuration ==="
           - "Snapshot Age Threshold: {{ snapshot_age }} days"
-          - "Execution Time: {{ current_timestamp }}"
+          - "Execution Time: {{ current_time }}"
 
     - name: Retrieve all virtual machines from vCenter
       register: all_vms_result
