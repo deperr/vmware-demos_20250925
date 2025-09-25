@@ -9,14 +9,6 @@
 
   tasks:
 
-    # - name: Validate snapshot age parameter
-    #   ansible.builtin.assert:
-    #     that:
-    #       - snapshot_age | default(7) | int > 0
-    #       - snapshot_age | default(7) | int <= 365
-    #     fail_msg: "snapshot_age must be between 1 and 365 days (provided: {{ snapshot_age | default(7) }})"
-    #     success_msg: "Snapshot age threshold validated: {{ snapshot_age | default(7) }} days"
-
     - name: Initialize snapshot cleanup variables
       register: cleanup_vars
       ansible.builtin.set_fact:
@@ -41,7 +33,7 @@
     - name: Get snapshot information from VMs
       register: snapshot_info
       community.vmware.vmware_all_snapshots_info:
-        datacenter: "SDDC-Datacenter"
+        datacenter: "{{ datacenter }}"
 
     - name: Debug
       ansible.builtin.debug:
