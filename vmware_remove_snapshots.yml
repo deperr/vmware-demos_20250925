@@ -23,7 +23,7 @@
       ansible.builtin.set_fact:
         snapshot_age: "{{ snapshot_age | default(7) | int }}"
         current_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S%z') }}"
-        cutoff_time: "{{ current_time | int - (snapshot_age | to_datetime('%Y-%m-%dT%H:%M:%S%z')) }}"
+        cutoff_time: "{{ ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%S%z') - (snapshot_age | to_datetime('%Y-%m-%dT%H:%M:%S%z')) }}"
         vms_processed: []
         snapshots_removed: 0
         removal_failures: 0
