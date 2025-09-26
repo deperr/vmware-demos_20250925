@@ -1,3 +1,14 @@
 ---
 
-- name: Test file
+- name: Test secret variable from vault
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - secrets.yml
+
+  tasks:
+
+    - name: Print message from vault
+      ansible.builtin.debug:
+        msg: "The value is: {{ foo }}"
