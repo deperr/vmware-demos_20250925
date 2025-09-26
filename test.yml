@@ -1,7 +1,7 @@
 ---
 
 - name: Test secret variable from vault
-  hosts: localhost
+  hosts: dp_rhel9-01
   gather_facts: false
 
   vars_files:
