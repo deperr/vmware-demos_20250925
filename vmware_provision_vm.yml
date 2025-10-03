@@ -31,7 +31,7 @@
           hotadd_cpu: true
           num_cpus: "{{ vm_cpus | default(omit)  }}" 
         provision_vm_disk:
-          - size_gb: 20
+          - size_gb: 30
             type: thin
             datastore: "workload-share-dwPsq"
         provision_vm_state: poweredon
