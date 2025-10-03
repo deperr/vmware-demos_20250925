@@ -8,7 +8,7 @@
     - secrets.yml
 
   vars:
-    vm_name: dp_rhel9test
+    vm_name: dp_rhel9-test
     vm_cpus: 2
     memsize_MiB: 4096
 
