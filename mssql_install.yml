@@ -1,0 +1,16 @@
+---
+
+- hosts: db_servers
+
+  vars:
+    mssql_accept_microsoft_odbc_driver_for_sql_server_eula: true
+    mssql_accept_microsoft_cli_utilities_for_sql_server_eula: true
+    mssql_accept_microsoft_sql_server_standard_eula: true
+    mssql_version: "{{ mssql_version }}"
+    mssql_password: "{{ mssql_password }}"
+    mssql_edition: Evaluation
+    mssql_post_input_sql_file:
+      - script1.sql
+      - script2.sql
+  roles:
+    - microsoft.sql.server
