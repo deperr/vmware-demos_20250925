@@ -1,14 +1,14 @@
 ---
 
 - name: Test secret variable from vault
-  hosts: dp_rhel9-01
+  hosts: db_servers
   gather_facts: false
 
-  vars_files:
-    - secrets.yml
+  # vars_files:
+  #   - secrets.yml
 
   tasks:
 
-    - name: Print message from vault
+    - name: Print hello world message
       ansible.builtin.debug:
-        msg: "The value is: {{ foo }}"
+        msg: "The value is: foo"
