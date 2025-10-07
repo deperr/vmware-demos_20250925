@@ -1,0 +1,12 @@
+---
+
+- name: Create databases on database servers
+  hosts: db_servers
+  gather_facts: true
+
+curl https://packages.microsoft.com/config/rhel/9/prod.repo | sudo tee /etc/yum.repos.d/mssql-release.repo
+sudo yum install -y mssql-tools18 unixODBC-devel
+sudo yum check-update
+sudo yum update mssql-tools18
+echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bash_profile
+source ~/.bash_profile
