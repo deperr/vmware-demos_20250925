@@ -1,0 +1,13 @@
+---
+
+- name: Create databases on database servers
+  hosts: db_servers
+  gather_facts: true
+
+  tasks:
+    - name: Create new database on servers
+      community.general.mssql_db:
+        login_host: "{{ mssql_hostname }}"
+        login_password: "{{ mssql_password }}"
+        name: aap-db
+        state: present
