@@ -11,6 +11,7 @@
     - name: Create new database on servers
       community.general.mssql_db:
         login_host: "{{ mssql_hostname }}"
+        login_user: "{{ mssql_user }}"
         login_password: "{{ mssql_password }}"
         name: aap-db
         state: present

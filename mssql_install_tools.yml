@@ -10,3 +10,4 @@ sudo yum check-update
 sudo yum update mssql-tools18
 echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bash_profile
 source ~/.bash_profile
+pip install pymssql
