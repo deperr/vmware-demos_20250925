@@ -19,7 +19,7 @@
 
     - name: Create variable for new databases
       register: output
-      ansible.builtin.command: sqlcmd -S "{{ mssql_hostname }}" -U "{{ mssql_user }}" -P "{{ mssql_password }}" -C
+      ansible.builtin.command: /opt/mssql-tools18/bin/sqlcmd -S "{{ mssql_hostname }}" -U "{{ mssql_user }}" -P "{{ mssql_password }}" -C
 
     - name: Show new databases
       ansible.builtin.debug:
