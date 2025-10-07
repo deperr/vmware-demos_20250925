@@ -1,6 +1,9 @@
 ---
 
 - hosts: db_servers
+  
+  vars_files:
+    - secrets.yml
 
   vars:
     mssql_accept_microsoft_odbc_driver_for_sql_server_eula: true

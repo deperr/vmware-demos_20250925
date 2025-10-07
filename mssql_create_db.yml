@@ -3,6 +3,7 @@
 - name: Create databases on database servers
   hosts: db_servers
   gather_facts: true
+  become: true
 
   vars_files:
     - secrets.yml
@@ -13,8 +14,9 @@
         login_host: "{{ mssql_hostname }}"
         login_user: "{{ mssql_user }}"
         login_password: "{{ mssql_password }}"
-        # login_host: localhost
-        # login_user: sa
-        # login_password: redhat123!
-        name: aap-db-2
+        name: aap-db-3
         state: present
+
+    - name: Show database tables
+      register: output
+      ansible.builtin.command: sqlcmd -S "{{ mysql_hostname }}" -U "{{ mysql_user }}" -P "{{ mysql_password }}" -C
