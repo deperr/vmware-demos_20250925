@@ -10,7 +10,7 @@
     mssql_password: redhat123!
     mssql_edition: Evaluation
     mssql_post_input_sql_file:
-      - script1.sql
-      - script2.sql
+      - ./script1.sql
+      - ./script2.sql
   roles:
     - microsoft.sql.server
