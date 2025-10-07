@@ -14,7 +14,7 @@
         # login_user: "{{ mssql_user }}"
         # login_password: "{{ mssql_password }}"
         login_host: localhost
-        login_user: redhat
+        login_user: sa
         login_password: redhat123
         name: aap-db
         state: present
