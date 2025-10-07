@@ -10,8 +10,11 @@
   tasks:
     - name: Create new database on servers
       community.general.mssql_db:
-        login_host: "{{ mssql_hostname }}"
-        login_user: "{{ mssql_user }}"
-        login_password: "{{ mssql_password }}"
+        # login_host: "{{ mssql_hostname }}"
+        # login_user: "{{ mssql_user }}"
+        # login_password: "{{ mssql_password }}"
+        login_host: localhost
+        login_user: redhat
+        login_password: redhat123
         name: aap-db
         state: present
