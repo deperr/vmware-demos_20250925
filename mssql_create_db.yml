@@ -4,6 +4,9 @@
   hosts: db_servers
   gather_facts: true
 
+  vars_files:
+    - secrets.yml
+
   tasks:
     - name: Create new database on servers
       community.general.mssql_db:
