@@ -14,13 +14,5 @@
         login_host: "{{ mssql_hostname }}"
         login_user: "{{ mssql_user }}"
         login_password: "{{ mssql_password }}"
-        name: aap-db-3
+        name: aap-db-4
         state: present
-
-    - name: Create variable for new databases
-      register: output
-      ansible.builtin.command: /opt/mssql-tools18/bin/sqlcmd -S "{{ mssql_hostname }}" -U "{{ mssql_user }}" -P "{{ mssql_password }}" -C
-
-    - name: Show new databases
-      ansible.builtin.debug:
-        msg: "{{ output }}"
