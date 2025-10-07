@@ -11,4 +11,4 @@
 
     - name: Print hello world message
       ansible.builtin.debug:
-        msg: "The value is: foo"
+        msg: "The value is: bar"
